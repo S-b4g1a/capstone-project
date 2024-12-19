@@ -32,6 +32,10 @@ class Booking(models.Model):
         nights = (self.check_out - self.check_in).days
         return self.room.price_per_night * nights
 
+class RoomGallery(models.Model):
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='room_gallery/')
+    caption = models.CharField(max_length=100, blank=True)
 
 
 

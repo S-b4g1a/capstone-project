@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Hotel, Room, Booking
 from django.core.mail import send_mail
+from .models import RoomGallery
 
 def home(request):
     hotels = Hotel.objects.all()
@@ -8,6 +9,7 @@ def home(request):
 
 def book_room(request, room_id):
     room = get_object_or_404(Room, pk=room_id)
+    images = RoomGallery.objects.filter(room=room)
     if request.method == 'POST':
         booking = Booking.objects.create(
             room=room,
@@ -19,6 +21,7 @@ def book_room(request, room_id):
         )
         booking.save()
 
+        # Send confirmation email
         send_mail(
             'Booking Confirmation',
             f'Your booking for {room.room_type} is confirmed.',
@@ -27,6 +30,8 @@ def book_room(request, room_id):
         )
 
         return render(request, 'confirmation.html', {'booking': booking})
-    return render(request, 'book_room.html', {'room': room})
+    return render(request, 'book_room.html', {'room': room, 'images': images})
+
+
 
 
